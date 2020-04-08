@@ -1,0 +1,69 @@
+#https://www.codecademy.com/practice/projects/world-populations-sql-practice-ii
+
+SELECT * 
+FROM countries
+LIMIT 5;
+
+SELECT * 
+FROM population_years
+LIMIT 5;
+
+SELECT continent, COUNT(*)
+FROM countries
+WHERE continent = 'Africa';
+
+
+SELECT countries.name,
+countries.continent, 
+population_years.population, population_years.year,
+SUM(population)
+FROM countries
+JOIN population_years
+  ON countries.id = population_years.country_id
+WHERE continent = 'Oceania'
+AND year = 2005;
+
+SELECT countries.name,
+countries.continent, 
+population_years.population, population_years.year,
+AVG(population)
+FROM countries
+JOIN population_years
+  ON countries.id = population_years.country_id
+WHERE continent = 'South America'
+AND year = 2003;
+
+SELECT countries.name,
+countries.continent, 
+population_years.population, population_years.year
+FROM countries
+JOIN population_years
+  ON countries.id = population_years.country_id
+WHERE year = 2007
+ORDER BY population
+LIMIT 1;
+
+SELECT countries.name, AVG(population)
+FROM countries
+JOIN population_years
+  ON countries.id = population_years.country_id
+WHERE name = 'Poland';
+
+SELECT DISTINCT (countries.name)
+FROM countries
+JOIN population_years
+  ON countries.id = population_years.country_id
+WHERE name LIKE '%The%';
+
+SELECT DISTINCT continent
+FROM countries
+JOIN population_years
+  ON countries.id = population_years.country_id
+ ;
+
+SELECT countries.continent, SUM(population)
+FROM countries
+JOIN population_years
+  ON countries.id = population_years.country_id
+  WHERE year = 2010
+GROUP BY continent;
