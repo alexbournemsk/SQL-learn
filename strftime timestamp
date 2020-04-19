@@ -1,0 +1,4 @@
+select strftime('%H', timestamp) as hour, round(avg(score)), count(title)
+  from hacker_news
+  group by 1
+  order by 2 desc;
