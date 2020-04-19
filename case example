@@ -1,0 +1,8 @@
+select count(*), case
+  when url like '%github%' then 'Github'
+  when url like '%nytimes%' then 'NY Times'
+  when url like '%medium.com%' then 'Medium'
+  else  'other'
+  end as 'Source'
+  from hacker_news
+  group by 2;
