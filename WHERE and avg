@@ -1,0 +1,11 @@
+Not works: 
+select *
+from table_name
+where price_col > avg(price_col);
+
+Works
+select *
+from table_name
+where price_col > ( select avg(price_col) from table_name );
+
+I still don’t understand why the return from avg is not possible on where but the return from a subquery is.
