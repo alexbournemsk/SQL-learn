@@ -1,0 +1,32 @@
+with NonPromoVisits (StudentId, BranchName, LastDate) as (
+    select er.StudentId, b.Name, max(e.StartsAt)
+    from CourseTimeline.EventRecord er
+    join CourseTimeline.Event e on er.EventId = e.Id
+    join CourseTimeline.Auditory a on e.AuditoryId = a.Id
+    join CourseTimeline.Office o on a.OfficeId = o.Id
+    join CourseTimeline.EventType et on e.EventTypeId = et.Id
+    join CourseTimeline.EventCategory ec on et.CategoryId = ec.Id
+    join CourseTimeline.Branch b on o.BranchId = b.Id
+    where ec.IsPromo = 0 and er.RecordStatus = 1
+    group by er.StudentId, b.Name
+),
+DealsWithRest (Id, BranchId, StudentId, Rest) as (
+    select d.Id, d.BranchId, d.StudentId, d.EventsCount - count(distinct r.Id)
+    from CourseTimeline.Deal d
+    left join CourseTimeline.EventRecord r on r.DealId = d.Id where r.RecordStatus in (1, 2)
+    group by d.Id, d.BranchId, d.StudentId, d.EventsCount
+),
+DealsWithRestByStudent (StudentId, BranchName, Rest) as (
+    select d.StudentId, b.Name, sum(d.Rest)
+    from DealsWithRest d
+    join CourseTimeline.Branch b on d.BranchId = b.Id
+    group by d.StudentId, b.Name
+)
+select s.Id, s.FullName, s.PhoneNumber, v.LastDate, v.BranchName as 'LastVisit Branch', d.Rest, d.BranchName 'Rest Branch'
+from CourseTimeline.Student s
+join NonPromoVisits v on v.StudentId = s.Id
+join DealsWithRestByStudent d on d.StudentId = s.Id
+where (v.BranchName like N'%Москва%' or d.BranchName like N'%Москва%')
+  and v.LastDate < '2020-04-01'
+  and d.Rest < 20
+order by v.LastDate desc
