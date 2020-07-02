@@ -1,0 +1,15 @@
+/*список всех студентов (кто оплачивал хоть раз) - ФИО
+кол-во транзакций - шт
+сумма оплат - руб*/
+
+select s.Id, s.FullName, s.PhoneNumber, s.Email, b.Name Branch,
+       count(distinct d.Id) DealsCount, count (distinct p.Id) PaymentsCount,
+       sum(d.Amount) NominalAmount, sum(p.Amount) PaidAmount
+from CourseTimeline.Student s
+join CourseTimeline.Deal d on s.Id = d.StudentId
+join CourseTimeline.Branch b on b.Id = d.BranchId
+join CourseTimeline.Payment p on p.DealId = d.Id
+where p.CreatedAt between '2019-01-01' and '2020-07-01'
+group by s.Id, s.FullName, s.PhoneNumber, s.Email, b.Name
+
+
