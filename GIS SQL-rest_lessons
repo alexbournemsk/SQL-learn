@@ -10,11 +10,11 @@ with NonPromoVisits (StudentId, BranchName, LastDate) as (
     where ec.IsPromo = 0 and er.RecordStatus = 1
     group by er.StudentId, b.Name
 ),
-DealsWithRest (Id, BranchId, StudentId, Rest) as (
-    select d.Id, d.BranchId, d.StudentId, d.EventsCount - count(distinct r.Id)
+DealsWithRest (BranchId, StudentId, Rest) as (
+    select d.BranchId, d.StudentId, sum(d.EventsCount) - count(distinct r.Id)
     from CourseTimeline.Deal d
     left join CourseTimeline.EventRecord r on r.DealId = d.Id where r.RecordStatus in (1, 2)
-    group by d.Id, d.BranchId, d.StudentId, d.EventsCount
+    group by d.BranchId, d.StudentId
 ),
 DealsWithRestByStudent (StudentId, BranchName, Rest) as (
     select d.StudentId, b.Name, sum(d.Rest)
